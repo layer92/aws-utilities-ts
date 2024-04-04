@@ -1,0 +1,32 @@
+{
+  "name": "@layer92/aws-utilities",
+  "version": "1.0.0",
+  "description": "",
+  "main": "compiled/index.js",
+  "types": "compiled/index.d.ts",
+  "files": [
+    "compiled"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "prepublish": "tsc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/layer92/aws-utilities-ts.git"
+  },
+  "author": "layer92",
+  "license": "0BSD",
+  "bugs": {
+    "url": "https://github.com/layer92/aws-utilities-ts/issues"
+  },
+  "homepage": "https://github.com/layer92/aws-utilities-ts#readme",
+  "dependencies": {
+    "@aws-sdk/client-s3": "3.414.0",
+    "@aws-sdk/s3-presigned-post": "^3.540.0",
+    "@aws-sdk/s3-request-presigner": "3.414.0",
+    "@layer92/core": "git+https://github.com/layer92/core-ts.git",
+    "@types/node": "20.8.6",
+    "typescript": "5.2.2"
+  }
+}
