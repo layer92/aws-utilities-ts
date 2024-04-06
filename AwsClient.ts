@@ -6,12 +6,13 @@ import { Conditions } from "@aws-sdk/s3-presigned-post/dist-types/types";
 
 const DefaultExpirationSeconds = SecondsBox.FromHours(4).getData();
 
+
 export class AwsClient{
     private readonly _client;
     
  
     /**
-     * @package _needs.linkExpirationSeconds: pass Infinity if you don't want links to expire
+     * @package _needs.linkExpirationSeconds: pass Infinity if you want to use the max expiration time AWS allows (probably 7 days)
     */
     constructor(private _needs:{
         bucketId:string,
@@ -33,7 +34,7 @@ export class AwsClient{
     /** 
      * Note that you can't limit filesize using a PUT url. If you need to limit filesize, use a POST url.
      * @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc...
-       @param options.linkExpirationSeconds: pass Infinity (not undefined) if you don't want the link to expire
+       @param options.linkExpirationSeconds: pass Infinity if you want to use the max expiration time AWS allows (probably 7 days)
      * */
      async makePresignedPutObjectUrlAsync(key:string,options?:{
         maxUploadSizeBytes?:number,
@@ -49,6 +50,7 @@ export class AwsClient{
         }
         return getSignedUrl(this._client,command,{expiresIn:this._needs.linkExpirationSeconds});
     }
+    
 
     /** 
      * @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc...
@@ -85,7 +87,7 @@ export class AwsClient{
     }
 
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc...
-     *  @param options.linkExpirationSeconds: pass Infinity if you don't want the link to expire
+     *  @param options.linkExpirationSeconds: pass Infinity if you want to use the max expiration time AWS allows (probably 7 days)
     */
     async makePresignedGetObjectUrlAsync(key:string,options?:{
         linkExpirationSeconds?:number,
@@ -99,6 +101,14 @@ export class AwsClient{
             Key:key,
         });
         return getSignedUrl(this._client,command,{expiresIn:linkExpirationSeconds});
+    }
+
+    /**
+     * @returns the URL to the object on the bucket, which may or may not be accessible depending on the bucket's policy
+    */
+    makeUnsignedGetObjectUrl(key:string){
+        const {bucketId,regionId}=this._needs;
+        return `https://${bucketId}.s3.${regionId}.amazonaws.com/${key}`;
     }
 
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */

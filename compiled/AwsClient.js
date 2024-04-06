@@ -8,7 +8,7 @@ const core_1 = require("@layer92/core");
 const DefaultExpirationSeconds = core_1.SecondsBox.FromHours(4).getData();
 class AwsClient {
     /**
-     * @package _needs.linkExpirationSeconds: pass Infinity if you don't want links to expire
+     * @package _needs.linkExpirationSeconds: pass Infinity if you want to use the max expiration time AWS allows (probably 7 days)
     */
     constructor(_needs) {
         this._needs = _needs;
@@ -24,7 +24,7 @@ class AwsClient {
     /**
      * Note that you can't limit filesize using a PUT url. If you need to limit filesize, use a POST url.
      * @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc...
-       @param options.linkExpirationSeconds: pass Infinity (not undefined) if you don't want the link to expire
+       @param options.linkExpirationSeconds: pass Infinity if you want to use the max expiration time AWS allows (probably 7 days)
      * */
     async makePresignedPutObjectUrlAsync(key, options) {
         const command = new client_s3_1.PutObjectCommand({
@@ -67,7 +67,7 @@ class AwsClient {
         return { url, formDataEntries };
     }
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc...
-     *  @param options.linkExpirationSeconds: pass Infinity if you don't want the link to expire
+     *  @param options.linkExpirationSeconds: pass Infinity if you want to use the max expiration time AWS allows (probably 7 days)
     */
     async makePresignedGetObjectUrlAsync(key, options) {
         let linkExpirationSeconds = options?.linkExpirationSeconds ?? this._needs.linkExpirationSeconds;
@@ -79,6 +79,13 @@ class AwsClient {
             Key: key,
         });
         return (0, s3_request_presigner_1.getSignedUrl)(this._client, command, { expiresIn: linkExpirationSeconds });
+    }
+    /**
+     * @returns the URL to the object on the bucket, which may or may not be accessible depending on the bucket's policy
+    */
+    makeUnsignedGetObjectUrl(key) {
+        const { bucketId, regionId } = this._needs;
+        return `https://${bucketId}.s3.${regionId}.amazonaws.com/${key}`;
     }
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
     async deleteObjectBykeyAsync(key) {

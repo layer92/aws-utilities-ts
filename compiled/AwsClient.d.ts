@@ -2,7 +2,7 @@ export declare class AwsClient {
     private _needs;
     private readonly _client;
     /**
-     * @package _needs.linkExpirationSeconds: pass Infinity if you don't want links to expire
+     * @package _needs.linkExpirationSeconds: pass Infinity if you want to use the max expiration time AWS allows (probably 7 days)
     */
     constructor(_needs: {
         bucketId: string;
@@ -14,7 +14,7 @@ export declare class AwsClient {
     /**
      * Note that you can't limit filesize using a PUT url. If you need to limit filesize, use a POST url.
      * @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc...
-       @param options.linkExpirationSeconds: pass Infinity (not undefined) if you don't want the link to expire
+       @param options.linkExpirationSeconds: pass Infinity if you want to use the max expiration time AWS allows (probably 7 days)
      * */
     makePresignedPutObjectUrlAsync(key: string, options?: {
         maxUploadSizeBytes?: number;
@@ -32,11 +32,15 @@ export declare class AwsClient {
         formDataEntries: [string, string][];
     }>;
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc...
-     *  @param options.linkExpirationSeconds: pass Infinity if you don't want the link to expire
+     *  @param options.linkExpirationSeconds: pass Infinity if you want to use the max expiration time AWS allows (probably 7 days)
     */
     makePresignedGetObjectUrlAsync(key: string, options?: {
         linkExpirationSeconds?: number;
     }): Promise<string>;
+    /**
+     * @returns the URL to the object on the bucket, which may or may not be accessible depending on the bucket's policy
+    */
+    makeUnsignedGetObjectUrl(key: string): string;
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
     deleteObjectBykeyAsync(key: string): Promise<void>;
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
