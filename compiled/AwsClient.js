@@ -5,7 +5,7 @@ const s3_presigned_post_1 = require("@aws-sdk/s3-presigned-post");
 const client_s3_1 = require("@aws-sdk/client-s3");
 const s3_request_presigner_1 = require("@aws-sdk/s3-request-presigner");
 const core_1 = require("@layer92/core");
-const DefaultExpirationSeconds = core_1.SecondsBox.FromHours(4).getData();
+const DefaultExpirationSeconds = (0, core_1.HoursToSeconds)(4);
 class AwsClient {
     /**
      * @package _needs.linkExpirationSeconds: pass Infinity if you want to use the max expiration time AWS allows (probably 7 days)
