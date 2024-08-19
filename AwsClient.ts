@@ -121,6 +121,19 @@ export class AwsClient{
     }
 
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
+    async doesObjectExistAsync(key:string){
+        let exists=true;
+        try{
+            await this.headObjectByKeyAsync(key,{onObjectNotFound:()=>exists=false});
+        }catch(e){
+            if(exists){
+                throw e;
+            }
+        }
+        return exists;
+    }
+
+    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
     async getObjectSizeBytesAsync(key:string){
         const head = await this.headObjectByKeyAsync(key);
         return head.ContentLength||0;
@@ -133,7 +146,7 @@ export class AwsClient{
     }
 
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
-    async headObjectByKeyAsync(key:string,options?:{onObjectNotFound:()=>void|Promise<void>}):Promise<HeadObjectCommandOutput>{
+    async headObjectByKeyAsync(key:string,options?:{onObjectNotFound:()=>any}):Promise<HeadObjectCommandOutput>{
         const command = new HeadObjectCommand({
             Bucket:this._needs.bucketId,
             Key:key,
