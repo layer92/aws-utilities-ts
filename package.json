@@ -1,6 +1,6 @@
 {
   "name": "@layer92/aws-utilities",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "compiled/index.js",
   "types": "compiled/index.d.ts",

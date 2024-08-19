@@ -1,5 +1,5 @@
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
-import { DeleteObjectCommand, GetObjectCommand, HeadObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand, HeadObjectCommand, HeadObjectCommandOutput, PutObjectCommand, S3Client, S3ServiceException } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Conditions } from "@aws-sdk/s3-presigned-post/dist-types/types";
 import { HoursToSeconds } from "@layer92/core";
@@ -112,7 +112,7 @@ export class AwsClient{
     }
 
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
-    async deleteObjectBykeyAsync(key:string){
+    async deleteObjectByKeyAsync(key:string){
         const command = new DeleteObjectCommand({
             Bucket:this._needs.bucketId,
             Key:key,
@@ -122,11 +122,32 @@ export class AwsClient{
 
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
     async getObjectSizeBytesAsync(key:string){
+        const head = await this.headObjectByKeyAsync(key);
+        return head.ContentLength||0;
+    }
+
+    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
+    async getObjectSha256SumAsync(key:string){
+        const head = await this.headObjectByKeyAsync(key);
+        return head.ChecksumSHA256;
+    }
+
+    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
+    async headObjectByKeyAsync(key:string,options?:{onObjectNotFound:()=>void|Promise<void>}):Promise<HeadObjectCommandOutput>{
         const command = new HeadObjectCommand({
             Bucket:this._needs.bucketId,
             Key:key,
         });
-        const result = await this._client.send(command);
-        return result.ContentLength||0;
+        try{
+            const result = await (this._client as S3Client).send(command);
+            return result;
+        }catch(e){
+            if(e instanceof S3ServiceException){
+                if(e.$response.statusCode===404){
+                    options?.onObjectNotFound?.();
+                }
+            }
+            throw e;
+        }
     }
 }

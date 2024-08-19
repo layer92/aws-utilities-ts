@@ -88,7 +88,7 @@ class AwsClient {
         return `https://${bucketId}.s3.${regionId}.amazonaws.com/${key}`;
     }
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
-    async deleteObjectBykeyAsync(key) {
+    async deleteObjectByKeyAsync(key) {
         const command = new client_s3_1.DeleteObjectCommand({
             Bucket: this._needs.bucketId,
             Key: key,
@@ -97,12 +97,32 @@ class AwsClient {
     }
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
     async getObjectSizeBytesAsync(key) {
+        const head = await this.headObjectByKeyAsync(key);
+        return head.ContentLength || 0;
+    }
+    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
+    async getObjectSha256SumAsync(key) {
+        const head = await this.headObjectByKeyAsync(key);
+        return head.ChecksumSHA256;
+    }
+    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
+    async headObjectByKeyAsync(key, options) {
         const command = new client_s3_1.HeadObjectCommand({
             Bucket: this._needs.bucketId,
             Key: key,
         });
-        const result = await this._client.send(command);
-        return result.ContentLength || 0;
+        try {
+            const result = await this._client.send(command);
+            return result;
+        }
+        catch (e) {
+            if (e instanceof client_s3_1.S3ServiceException) {
+                if (e.$response.statusCode === 404) {
+                    options?.onObjectNotFound?.();
+                }
+            }
+            throw e;
+        }
     }
 }
 exports.AwsClient = AwsClient;

@@ -1,3 +1,4 @@
+import { HeadObjectCommandOutput } from "@aws-sdk/client-s3";
 export declare class AwsClient {
     private _needs;
     private readonly _client;
@@ -42,7 +43,13 @@ export declare class AwsClient {
     */
     makeUnsignedGetObjectUrl(key: string): string;
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
-    deleteObjectBykeyAsync(key: string): Promise<void>;
+    deleteObjectByKeyAsync(key: string): Promise<void>;
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
-    getObjectSizeBytesAsync(key: string): Promise<any>;
+    getObjectSizeBytesAsync(key: string): Promise<number>;
+    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
+    getObjectSha256SumAsync(key: string): Promise<string>;
+    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
+    headObjectByKeyAsync(key: string, options?: {
+        onObjectNotFound: () => void | Promise<void>;
+    }): Promise<HeadObjectCommandOutput>;
 }
