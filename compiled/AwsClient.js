@@ -96,6 +96,19 @@ class AwsClient {
         const result = await this._client.send(command);
     }
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
+    async doesObjectExistAsync(key) {
+        let exists = true;
+        try {
+            await this.headObjectByKeyAsync(key, { onObjectNotFound: () => exists = false });
+        }
+        catch (e) {
+            if (exists) {
+                throw e;
+            }
+        }
+        return exists;
+    }
+    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
     async getObjectSizeBytesAsync(key) {
         const head = await this.headObjectByKeyAsync(key);
         return head.ContentLength || 0;
