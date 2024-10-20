@@ -35,7 +35,7 @@ class AwsClient {
         if (linkExpirationSeconds === Infinity) {
             linkExpirationSeconds = undefined;
         }
-        return (0, s3_request_presigner_1.getSignedUrl)(this._client, command, { expiresIn: this._needs.linkExpirationSeconds });
+        return (0, s3_request_presigner_1.getSignedUrl)(this._client, command, { expiresIn: linkExpirationSeconds });
     }
     /**
      * @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc...
@@ -108,16 +108,16 @@ class AwsClient {
         }
         return exists;
     }
-    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
-    async getObjectSizeBytesAsync(key) {
-        const head = await this.headObjectByKeyAsync(key);
-        return head.ContentLength || 0;
-    }
-    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
-    async getObjectSha256SumAsync(key) {
-        const head = await this.headObjectByKeyAsync(key);
-        return head.ChecksumSHA256;
-    }
+    // /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
+    // async getObjectSizeBytesAsync(key:string){
+    //     const head = await this.headObjectByKeyAsync(key);
+    //     return head.ContentLength||0;
+    // }
+    // /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
+    // async getObjectSha256SumAsync(key:string){
+    //     const head = await this.headObjectByKeyAsync(key);
+    //     return head.ChecksumSHA256;
+    // }
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
     async headObjectByKeyAsync(key, options) {
         const command = new client_s3_1.HeadObjectCommand({

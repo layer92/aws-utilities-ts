@@ -47,10 +47,6 @@ export declare class AwsClient {
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
     doesObjectExistAsync(key: string): Promise<boolean>;
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
-    getObjectSizeBytesAsync(key: string): Promise<number>;
-    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
-    getObjectSha256SumAsync(key: string): Promise<string>;
-    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
     headObjectByKeyAsync(key: string, options?: {
         onObjectNotFound: () => any;
     }): Promise<HeadObjectCommandOutput>;
