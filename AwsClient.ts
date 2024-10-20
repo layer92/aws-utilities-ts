@@ -48,7 +48,7 @@ export class AwsClient{
         if(linkExpirationSeconds===Infinity){
             linkExpirationSeconds=undefined;
         }
-        return getSignedUrl(this._client,command,{expiresIn:this._needs.linkExpirationSeconds});
+        return getSignedUrl(this._client,command,{expiresIn:linkExpirationSeconds});
     }
     
 
@@ -133,17 +133,17 @@ export class AwsClient{
         return exists;
     }
 
-    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
-    async getObjectSizeBytesAsync(key:string){
-        const head = await this.headObjectByKeyAsync(key);
-        return head.ContentLength||0;
-    }
+    // /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
+    // async getObjectSizeBytesAsync(key:string){
+    //     const head = await this.headObjectByKeyAsync(key);
+    //     return head.ContentLength||0;
+    // }
 
-    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
-    async getObjectSha256SumAsync(key:string){
-        const head = await this.headObjectByKeyAsync(key);
-        return head.ChecksumSHA256;
-    }
+    // /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
+    // async getObjectSha256SumAsync(key:string){
+    //     const head = await this.headObjectByKeyAsync(key);
+    //     return head.ChecksumSHA256;
+    // }
 
     /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc... */
     async headObjectByKeyAsync(key:string,options?:{onObjectNotFound:()=>any}):Promise<HeadObjectCommandOutput>{
