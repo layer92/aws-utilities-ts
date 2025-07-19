@@ -30,6 +30,7 @@ class AwsClient {
         const command = new client_s3_1.PutObjectCommand({
             Bucket: this._needs.bucketId,
             Key: key,
+            ContentDisposition: options?.contentDisposition,
         });
         let linkExpirationSeconds = options?.linkExpirationSeconds ?? this._needs.linkExpirationSeconds;
         if (linkExpirationSeconds === Infinity) {

@@ -20,6 +20,7 @@ export declare class AwsClient {
     makePresignedPutObjectUrlAsync(key: string, options?: {
         maxUploadSizeBytes?: number;
         linkExpirationSeconds?: number;
+        contentDisposition?: string;
     }): Promise<string>;
     /**
      * @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc...

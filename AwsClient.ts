@@ -39,10 +39,12 @@ export class AwsClient{
      async makePresignedPutObjectUrlAsync(key:string,options?:{
         maxUploadSizeBytes?:number,
         linkExpirationSeconds?:number,
+        contentDisposition?:string,
      }){
         const command = new PutObjectCommand({
             Bucket:this._needs.bucketId,
             Key:key,
+            ContentDisposition:options?.contentDisposition,
         });
         let linkExpirationSeconds = options?.linkExpirationSeconds??this._needs.linkExpirationSeconds;
         if(linkExpirationSeconds===Infinity){
