@@ -81,6 +81,20 @@ class AwsClient {
         });
         return (0, s3_request_presigner_1.getSignedUrl)(this._client, command, { expiresIn: linkExpirationSeconds });
     }
+    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc...
+     *  @param options.linkExpirationSeconds: pass Infinity if you want to use the max expiration time AWS allows (probably 7 days)
+    */
+    async makePresignedHeadObjectUrlAsync(key, options) {
+        let linkExpirationSeconds = options?.linkExpirationSeconds ?? this._needs.linkExpirationSeconds;
+        if (linkExpirationSeconds === Infinity) {
+            linkExpirationSeconds = undefined;
+        }
+        const command = new client_s3_1.HeadObjectCommand({
+            Bucket: this._needs.bucketId,
+            Key: key,
+        });
+        return (0, s3_request_presigner_1.getSignedUrl)(this._client, command, { expiresIn: linkExpirationSeconds });
+    }
     /**
      * @returns the URL to the object on the bucket, which may or may not be accessible depending on the bucket's policy
     */

@@ -39,6 +39,12 @@ export declare class AwsClient {
     makePresignedGetObjectUrlAsync(key: string, options?: {
         linkExpirationSeconds?: number;
     }): Promise<string>;
+    /** @param key: a path on the bucket, eg "foo.png", "foo/bar.txt", etc...
+     *  @param options.linkExpirationSeconds: pass Infinity if you want to use the max expiration time AWS allows (probably 7 days)
+    */
+    makePresignedHeadObjectUrlAsync(key: string, options?: {
+        linkExpirationSeconds?: number;
+    }): Promise<string>;
     /**
      * @returns the URL to the object on the bucket, which may or may not be accessible depending on the bucket's policy
     */
